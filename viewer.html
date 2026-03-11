@@ -1,0 +1,124 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Viewer - InsideBacteria</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    .page-viewer { height: 100vh; display: flex; flex-direction: column; background: #070d19; overflow: hidden; }
+    .viewer-nav  { position: relative; z-index: 200; pointer-events: auto; height: 56px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+    .viewer-body { position: relative; z-index: 1; flex: 1; display: flex; overflow: hidden; min-height: 0; }
+    #viewer-wrap { flex: 1; position: relative; z-index: 1; min-width: 0; }
+    #three-canvas { display: block; width: 100%; height: 100%; }
+    .settings-panel { width: 280px; flex-shrink: 0; overflow-y: auto; transition: margin-right 0.35s cubic-bezier(0.16,1,0.3,1); }
+    .settings-panel.hidden { margin-right: -280px; }
+  </style>
+</head>
+<body class="page-viewer">
+
+  <!-- Navbar -->
+  <div class="viewer-nav">
+    <div class="vn-left">
+      <a href="index.html" class="vn-back" title="Kembali">&#8592;</a>
+      <span class="vn-title">&#x1F9EC; InsideBacteria</span>
+    </div>
+    <div class="vn-right">
+      <button class="vn-btn active" id="btn-labels" onclick="toggleLabels()" title="Label">&#x1F4CD;</button>
+      <button class="vn-btn" id="btn-settings" onclick="toggleSettings()" title="Pengaturan">&#x2699;</button>
+    </div>
+  </div>
+
+  <!-- Viewer Body -->
+  <div class="viewer-body">
+
+    <!-- Canvas area -->
+    <div id="viewer-wrap">
+      <canvas id="three-canvas"></canvas>
+
+      <!-- Loading overlay -->
+      <div id="loading">
+        <div class="spinner"></div>
+        <div class="progress-wrap"><div id="progress-bar"></div></div>
+        <div id="load-label">Memuat model&#8230;</div>
+      </div>
+
+      <!-- Controls hint -->
+      <div id="controls-hint">
+        &#x1F5B1; <strong>Seret</strong> untuk memutar &nbsp;&middot;&nbsp; <strong>Scroll</strong> untuk zoom &nbsp;&middot;&nbsp; <strong>Klik kanan</strong> untuk geser
+      </div>
+
+      <!-- Info popup -->
+      <div id="info-popup">
+        <div class="popup-accent" id="popup-accent"></div>
+        <button class="popup-close" onclick="closeInfo()">&#x2715;</button>
+        <div class="popup-body">
+          <div class="popup-header">
+            <span class="popup-icon" id="popup-icon"></span>
+            <div>
+              <div class="popup-num" id="popup-num"></div>
+              <div class="popup-name" id="popup-name"></div>
+              <div class="popup-sub" id="popup-sub"></div>
+            </div>
+          </div>
+          <div class="popup-desc" id="popup-desc"></div>
+          <ul class="popup-detail" id="popup-detail"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings panel (side) -->
+    <div class="settings-panel hidden" id="settingsPanel">
+
+      <div class="sp-section">
+        <h3>&#x1F9EC; Lapisan Model</h3>
+        <div id="layer-list"></div>
+      </div>
+
+      <div class="sp-section">
+        <h3>&#x1F4A1; Pencahayaan</h3>
+        <div class="sp-slider">
+          <label>Kecerahan <span id="v-amb">0.12</span></label>
+          <input type="range" min="0" max="2" step="0.04" value="0.12" oninput="setAmbient(this.value)">
+        </div>
+        <div class="sp-slider">
+          <label>Cahaya Utama <span id="v-dir">0.70</span></label>
+          <input type="range" min="0" max="3" step="0.1" value="0.70" oninput="setDirectional(this.value)">
+        </div>
+        <div class="sp-slider">
+          <label>Exposure <span id="v-env">0.62</span></label>
+          <input type="range" min="0.2" max="2" step="0.04" value="0.62" oninput="setEnv(this.value)">
+        </div>
+      </div>
+
+      <div class="sp-section">
+        <h3>&#x1F3F7; Fokus Bagian</h3>
+        <div class="sp-tags" id="org-tags"></div>
+      </div>
+
+      <div class="sp-section">
+        <h3>&#x1F3AE; Kontrol</h3>
+        <div class="sp-btns">
+          <button class="sp-btn sp-btn-outline" onclick="resetCamera()">&#x21BA; Reset Kamera</button>
+          <a href="info.html" class="sp-btn sp-btn-primary">&#x1F4D6; Pelajari Selengkapnya</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Three.js importmap -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three":         "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+      "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module" src="script.js"></script>
+</body>
+</html>

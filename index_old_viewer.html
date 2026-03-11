@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bacterial Cell Structure – 3D Viewer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0d1117;
+      color: #e6edf3;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ──────────────────────────────────────────────── */
+    #sidebar {
+      width: 258px;
+      min-width: 258px;
+      background: #161b22;
+      border-right: 1px solid #30363d;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    #sidebar-header {
+      padding: 16px;
+      border-bottom: 1px solid #30363d;
+      flex-shrink: 0;
+    }
+    #sidebar-header h1 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #58a6ff;
+      letter-spacing: 0.3px;
+    }
+    #sidebar-header p {
+      font-size: 11px;
+      color: #8b949e;
+      margin-top: 4px;
+    }
+
+    #sidebar-section-title {
+      font-size: 10px;
+      color: #8b949e;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      padding: 12px 16px 4px;
+      flex-shrink: 0;
+    }
+
+    #model-list {
+      flex: 1;
+      overflow-y: auto;
+      padding-bottom: 4px;
+    }
+    #model-list::-webkit-scrollbar { width: 4px; }
+    #model-list::-webkit-scrollbar-track { background: transparent; }
+    #model-list::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+
+    .model-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 16px;
+      cursor: pointer;
+      transition: background 0.12s;
+      user-select: none;
+    }
+    .model-item:hover { background: #21262d; }
+    .model-item.hidden .model-name { opacity: 0.38; text-decoration: line-through; }
+    .model-item.loading .model-name::after { content: ' …'; color: #8b949e; }
+
+    .color-swatch {
+      width: 13px; height: 13px;
+      border-radius: 3px;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.08);
+    }
+    .model-name { font-size: 12.5px; flex: 1; line-height: 1.3; }
+    .model-badge {
+      font-size: 10px;
+      color: #8b949e;
+      background: #21262d;
+      padding: 1px 5px;
+      border-radius: 8px;
+      flex-shrink: 0;
+    }
+
+    #sidebar-actions {
+      padding: 10px 12px 14px;
+      border-top: 1px solid #30363d;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    #sidebar-actions button {
+      padding: 7px 4px;
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      color: #e6edf3;
+      font-size: 11.5px;
+      cursor: pointer;
+      transition: background 0.12s, border-color 0.12s;
+      white-space: nowrap;
+    }
+    #sidebar-actions button:hover { background: #30363d; border-color: #8b949e; }
+    #sidebar-actions button.active { border-color: #58a6ff; color: #58a6ff; }
+    #btn-reset-cam { grid-column: span 2; }
+
+    /* Opacity slider row */
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px 2px;
+      font-size: 11px;
+      color: #8b949e;
+      flex-shrink: 0;
+    }
+    .slider-row input[type=range] {
+      flex: 1;
+      accent-color: #58a6ff;
+    }
+
+    /* ── Viewport ─────────────────────────────────────────────── */
+    #viewport {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      background: radial-gradient(ellipse at 60% 40%, #dde8f0 0%, #cfd0e8 55%, #c8bfe0 100%);
+    }
+
+    #canvas { display: block; }
+
+    /* Loading overlay */
+    #loading-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 60% 40%, #dde8f0 0%, #cfd0e8 55%, #c8bfe0 100%);
+      z-index: 10;
+      transition: opacity 0.5s;
+    }
+    #loading-overlay.fade-out { opacity: 0; pointer-events: none; }
+
+    .spinner {
+      width: 44px; height: 44px;
+      border: 3px solid rgba(0,0,0,0.12);
+      border-top-color: #009688;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #loading-label {
+      font-size: 13px;
+      color: #00695c;
+      margin-top: 14px;
+    }
+    #progress-bar {
+      width: 200px; height: 3px;
+      background: rgba(0,0,0,0.12);
+      border-radius: 2px;
+      margin-top: 10px;
+      overflow: hidden;
+    }
+    #progress-fill {
+      height: 100%;
+      background: #009688;
+      border-radius: 2px;
+      width: 0%;
+      transition: width 0.25s ease;
+    }
+
+    /* Server notice */
+    #server-notice {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: #2d1b00;
+      border: 1px solid #9e6a03;
+      border-radius: 6px;
+      padding: 8px 12px;
+      font-size: 11.5px;
+      color: #e3b341;
+      max-width: 340px;
+      line-height: 1.5;
+      z-index: 20;
+      display: none;
+    }
+    #server-notice b { display: block; margin-bottom: 3px; }
+    #server-notice code {
+      background: rgba(0,0,0,0.3);
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 11px;
+    }
+    #dismiss-notice {
+      float: right;
+      cursor: pointer;
+      margin-left: 8px;
+      opacity: 0.7;
+    }
+    #dismiss-notice:hover { opacity: 1; }
+
+    /* HUD */
+    #hud {
+      position: absolute;
+      bottom: 14px;
+      right: 14px;
+      font-size: 10.5px;
+      color: rgba(30,30,60,0.45);
+      text-align: right;
+      line-height: 1.7;
+      pointer-events: none;
+    }
+
+    /* Axes helper label */
+    #axes-label {
+      position: absolute;
+      bottom: 14px;
+      left: 14px;
+      font-size: 10px;
+      color: rgba(30,30,60,0.35);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Sidebar ───────────────────────────────────────────────── -->
+<div id="sidebar">
+  <div id="sidebar-header">
+    <h1>🦠 Bacterial Cell Structure</h1>
+    <p>3D Viewer — 10 components loaded</p>
+  </div>
+
+  <div id="sidebar-section-title">Components</div>
+  <div id="model-list"></div>
+
+  <div class="slider-row">
+    <span>Opacity</span>
+    <input type="range" id="opacity-slider" min="10" max="100" value="100" />
+    <span id="opacity-value">100%</span>
+  </div>
+
+  <div id="sidebar-actions">
+    <button id="btn-show-all">Show All</button>
+    <button id="btn-hide-all">Hide All</button>
+    <button id="btn-wireframe">Wireframe</button>
+    <button id="btn-flat">Flat Shading</button>
+    <button id="btn-reset-cam">↺ Reset Camera</button>
+  </div>
+</div>
+
+<!-- ── Viewport ───────────────────────────────────────────────── -->
+<div id="viewport">
+  <canvas id="canvas"></canvas>
+
+  <div id="loading-overlay">
+    <div class="spinner"></div>
+    <div id="loading-label">Loading models… 0 / 10</div>
+    <div id="progress-bar"><div id="progress-fill"></div></div>
+  </div>
+
+  <div id="server-notice">
+    <span id="dismiss-notice" title="Dismiss">✕</span>
+    <b>⚠ File-access restriction detected</b>
+    Some models could not be fetched. Open this project via a local HTTP server:
+    <br /><code>npx serve .</code> &nbsp;or&nbsp; <code>python -m http.server 8080</code>
+    <br />Then open <code>http://localhost:8080</code>
+  </div>
+
+  <div id="hud">
+    Left-drag · rotate &nbsp;|&nbsp; Right-drag · pan &nbsp;|&nbsp; Scroll · zoom
+  </div>
+  <div id="axes-label">X Y Z axes shown</div>
+</div>
+
+<!-- ── Three.js (import map) ──────────────────────────────────── -->
+<script type="importmap">
+{
+  "imports": {
+    "three":          "https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.module.js",
+    "three/addons/":  "https://cdn.jsdelivr.net/npm/three@0.163.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE                from 'three';
+import { OBJLoader }             from 'three/addons/loaders/OBJLoader.js';
+import { OrbitControls }         from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment }       from 'three/addons/environments/RoomEnvironment.js';
+import { EffectComposer }        from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass }            from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass }       from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass }            from 'three/addons/postprocessing/OutputPass.js';
+
+/* ── Component definitions ────────────────────────────────────── */
+// Mapped from actual bounding-box analysis of each .obj
+// color · roughness · metalness · clearcoat · clearcoatRoughness · opacity · emissive · emissiveIntensity
+const MODELS = [
+  // model_0 — tiny compact shape (plasmid or small organelle)
+  { id: 0, name: 'Plasmid',           color: 0xb07ae8, roughness: 0.35, metalness: 0.0, clearcoat: 0.7, clearcoatRoughness: 0.12, opacity: 1.0,  emissive: 0x2a0050, emissiveIntensity: 0.20 },
+  // model_1 — medium shell, transparent inner capsule
+  { id: 1, name: 'Circular DNA',      color: 0xb07ae8, roughness: 0.06, metalness: 0.0, clearcoat: 1.0, clearcoatRoughness: 0.02, opacity: 1.0, emissive: 0x3a1028, emissiveIntensity: 0.06 },
+  // model_2 — long thin, extends to Z=-3.5 (flagellum 1)
+  // updated to teal → cyan gradient look (darker root, lighter tip)
+  { id: 2, name: 'Flagellum',         color: 0x0d8a7a, roughness: 0.18, metalness: 0.0, clearcoat: 0.9, clearcoatRoughness: 0.06, opacity: 1.0,  emissive: 0x064a40, emissiveIntensity: 0.18 },
+  // model_3 — long thin, Z=-3.2 (flagellum 2)
+  // slightly lighter cyan/seafoam for variation
+  { id: 3, name: 'Flagellum',     color: 0x18b8a4, roughness: 0.16, metalness: 0.0, clearcoat: 0.9, clearcoatRoughness: 0.05, opacity: 1.0,  emissive: 0x085850, emissiveIntensity: 0.14 },
+  // model_4 — large 1.2×1.2×3.2 (main outer body — teal/dark cyan)
+  { id: 4, name: 'Capsule',    color: 0x0a7e6e, roughness: 0.22, metalness: 0.0, clearcoat: 0.85, clearcoatRoughness: 0.08, opacity: 1.0, emissive: 0x044038, emissiveIntensity: 0.18 },
+  // model_5 — large 1.1×0.9×2.9 (inner membrane) — adjusted to olive/khaki
+  { id: 5, name: 'Cell wall',    color: 0x9dbb4a, roughness: 0.36, metalness: 0.0, clearcoat: 0.6, clearcoatRoughness: 0.14, opacity: 1.0,  emissive: 0x2a3408, emissiveIntensity: 0.10 },
+  // model_6 — medium 1.0×0.9×2.6 (cytoplasm) — adjusted to pale khaki, slightly translucent
+  { id: 6, name: 'Cell Membrane',         color: 0xbfb77a, roughness: 0.48, metalness: 0.0, clearcoat: 0.25, clearcoatRoughness: 0.26, opacity: 1.0, emissive: 0x1a1900, emissiveIntensity: 0.06 },
+  // model_7 — largest 2.2×2.2×3.8, tentacles everywhere (pili)
+  // changed to teal/turquoise to match reference
+  { id: 7, name: 'Pili ',   color: 0x0a6e60, roughness: 0.18, metalness: 0.0, clearcoat: 0.9, clearcoatRoughness: 0.05, opacity: 1.0,  emissive: 0x064a40, emissiveIntensity: 0.18 },
+  // model_8 — medium scattered (ribosomes — red/pink dots)
+  { id: 8, name: 'Ribosomes',         color: 0xe82050, roughness: 0.38, metalness: 0.0, clearcoat: 0.6, clearcoatRoughness: 0.15, opacity: 1.0,  emissive: 0x500010, emissiveIntensity: 0.20 },
+  // model_9 — medium 0.9×0.8×2.5 (cell wall) — thicker translucent grey (more viscous)
+  { id: 9, name: 'Cytoplasm',         color: 0xc9cbcc, roughness: 0.10, metalness: 0.0, clearcoat: 1.0, clearcoatRoughness: 0.04, opacity: 0.25,  emissive: 0x070708, emissiveIntensity: 0.02 },
+];
+
+/* ── Procedural slime / mucus texture generator ───────────────── */
+// Simple 2D value-noise for organic look (no external libs needed)
+function hash2D(ix, iy) {
+  let n = ix * 374761393 + iy * 668265263;
+  n = (n ^ (n >> 13)) * 1274126177;
+  return ((n ^ (n >> 16)) & 0x7fffffff) / 0x7fffffff;
+}
+function smoothNoise(x, y) {
+  const ix = Math.floor(x), iy = Math.floor(y);
+  const fx = x - ix, fy = y - iy;
+  const sx = fx * fx * (3 - 2 * fx), sy = fy * fy * (3 - 2 * fy);
+  const a = hash2D(ix, iy), b = hash2D(ix + 1, iy);
+  const c = hash2D(ix, iy + 1), d = hash2D(ix + 1, iy + 1);
+  return a + (b - a) * sx + (c - a) * sy + (a - b - c + d) * sx * sy;
+}
+function fbm(x, y, octaves = 5) {
+  let val = 0, amp = 0.5, freq = 1;
+  for (let i = 0; i < octaves; i++) {
+    val += amp * smoothNoise(x * freq, y * freq);
+    amp *= 0.5; freq *= 2.1;
+  }
+  return val;
+}
+
+// Generate a slimy normal map (Canvas → THREE.CanvasTexture)
+function makeSlimeNormalMap(size = 512, scale = 6, strength = 1.2) {
+  const cv = document.createElement('canvas');
+  cv.width = cv.height = size;
+  const ctx = cv.getContext('2d');
+  const img = ctx.createImageData(size, size);
+  const d = img.data;
+  // build height field
+  const h = new Float32Array(size * size);
+  for (let y = 0; y < size; y++)
+    for (let x = 0; x < size; x++)
+      h[y * size + x] = fbm(x / size * scale, y / size * scale, 5);
+  // derive normals from height via central differences
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const idx = y * size + x;
+      const l = h[y * size + ((x - 1 + size) % size)];
+      const r = h[y * size + ((x + 1) % size)];
+      const u = h[((y - 1 + size) % size) * size + x];
+      const dn = h[((y + 1) % size) * size + x];
+      let nx = (l - r) * strength;
+      let ny = (u - dn) * strength;
+      let nz = 1.0;
+      const len = Math.sqrt(nx * nx + ny * ny + nz * nz);
+      nx /= len; ny /= len; nz /= len;
+      const p = idx * 4;
+      d[p]     = Math.round((nx * 0.5 + 0.5) * 255);
+      d[p + 1] = Math.round((ny * 0.5 + 0.5) * 255);
+      d[p + 2] = Math.round((nz * 0.5 + 0.5) * 255);
+      d[p + 3] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+  const tex = new THREE.CanvasTexture(cv);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(2, 2);
+  return tex;
+}
+
+// Generate a slimy roughness map (dark = smooth/wet, light = rough)
+function makeSlimeRoughnessMap(size = 512, scale = 8) {
+  const cv = document.createElement('canvas');
+  cv.width = cv.height = size;
+  const ctx = cv.getContext('2d');
+  const img = ctx.createImageData(size, size);
+  const d = img.data;
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      // combine two noise octaves for irregular wet patches
+      const v1 = fbm(x / size * scale, y / size * scale, 4);
+      const v2 = fbm(x / size * scale * 2.3 + 50, y / size * scale * 2.3 + 50, 3);
+      // wet streaks: lower values = smoother/wetter
+      let v = v1 * 0.6 + v2 * 0.4;
+      // clamp to create distinct wet vs damp zones
+      v = Math.pow(v, 1.4);
+      const c = Math.round(v * 180 + 30); // range ~30-210
+      const p = (y * size + x) * 4;
+      d[p] = d[p + 1] = d[p + 2] = c;
+      d[p + 3] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+  const tex = new THREE.CanvasTexture(cv);
+  tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+  tex.repeat.set(2, 2);
+  return tex;
+}
+
+// Pre-generate shared slime textures
+const slimeNormal    = makeSlimeNormalMap(512, 6, 1.5);
+const slimeRoughness = makeSlimeRoughnessMap(512, 8);
+// Finer variant for small parts (pili, flagella, ribosomes)
+const slimeNormalFine    = makeSlimeNormalMap(256, 12, 0.8);
+const slimeRoughnessFine = makeSlimeRoughnessMap(256, 14);
+
+/* ── Renderer ─────────────────────────────────────────────────── */
+const canvas   = document.getElementById('canvas');
+const viewport = document.getElementById('viewport');
+
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type    = THREE.PCFSoftShadowMap;
+renderer.physicallyCorrectLights = true;
+renderer.toneMapping         = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 0.62;
+renderer.outputColorSpace    = THREE.SRGBColorSpace;
+renderer.setClearColor(0xd6d0e8, 1);
+
+const scene  = new THREE.Scene();
+scene.background = new THREE.Color(0xd6d0e8);
+scene.fog = new THREE.FogExp2(0xd6d0e8, 0.015);
+
+const camera = new THREE.PerspectiveCamera(45, 1, 0.0001, 5000);
+camera.position.set(0, 0, 5);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor  = 0.06;
+controls.minDistance    = 0.001;
+controls.maxDistance    = 2000;
+
+/* ── Environment map (RoomEnvironment → realistic IBL reflections) ── */
+const pmremGen = new THREE.PMREMGenerator(renderer);
+pmremGen.compileEquirectangularShader();
+scene.environment = pmremGen.fromScene(new RoomEnvironment(), 0.01).texture;
+pmremGen.dispose();
+
+/* ── Lighting ─────────────────────────────────────────────────── */
+// Soft hemisphere – lavender sky / warm ground (darker)
+const hemi = new THREE.HemisphereLight(0xd4ccff, 0xc8e4b0, 0.12);
+scene.add(hemi);
+
+// Key light – main studio light, warm white, casts shadows (reduced)
+const key = new THREE.DirectionalLight(0xfff6ee, 0.7);
+key.position.set(6, 8, 7);
+key.castShadow = true;
+key.shadow.mapSize.set(2048, 2048);
+key.shadow.camera.near = 0.1;
+key.shadow.camera.far  = 100;
+key.shadow.bias = -0.0005;
+scene.add(key);
+
+// Fill – cool blue left side (subtle)
+const fill = new THREE.DirectionalLight(0xaabcff, 0.15);
+fill.position.set(-7, 3, -2);
+scene.add(fill);
+
+// Rim – warm backlight for silhouette glow (softer)
+const rim = new THREE.DirectionalLight(0xffe0a0, 0.18);
+rim.position.set(-2, -4, -7);
+scene.add(rim);
+
+// Top softbox (dim)
+const top = new THREE.DirectionalLight(0xffffff, 0.12);
+top.position.set(0, 12, 2);
+scene.add(top);
+
+/* ── Axes helper ──────────────────────────────────────────────── */
+const axesHelper = new THREE.AxesHelper(0.5);
+scene.add(axesHelper);
+
+/* ── Post-processing ─────────────────────────────────────────── */
+const composer = new EffectComposer(renderer);
+const renderPass = new RenderPass(scene, camera);
+composer.addPass(renderPass);
+
+const bloomPass = new UnrealBloomPass(
+  new THREE.Vector2(window.innerWidth, window.innerHeight),
+  0.32,   // strength (increased for HDR feel)
+  0.6,    // radius
+  0.7     // threshold (lower threshold -> more bloom)
+);
+composer.addPass(bloomPass);
+
+const outputPass = new OutputPass();
+composer.addPass(outputPass);
+
+/* ── Resize ───────────────────────────────────────────────────── */
+function resize() {
+  const w = viewport.clientWidth, h = viewport.clientHeight;
+  renderer.setSize(w, h);
+  composer.setSize(w, h);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+window.addEventListener('resize', resize);
+resize();
+
+/* ── Animation loop ───────────────────────────────────────────── */
+renderer.setAnimationLoop(() => { controls.update(); composer.render(); });
+
+/* ── Model loading ────────────────────────────────────────────── */
+const group    = new THREE.Group();
+scene.add(group);
+
+const meshMap  = {};   // id → THREE.Group
+const matMap   = {};   // id → THREE.Material
+const visible  = {};
+let loadedCount = 0;
+let failCount   = 0;
+const TOTAL = MODELS.length;
+let initCamPos, initTarget;
+
+function onProgress(count) {
+  document.getElementById('loading-label').textContent =
+    `Loading models… ${count} / ${TOTAL}`;
+  document.getElementById('progress-fill').style.width =
+    `${(count / TOTAL) * 100}%`;
+
+  if (count === TOTAL) {
+    const overlay = document.getElementById('loading-overlay');
+    overlay.classList.add('fade-out');
+    setTimeout(() => overlay.style.display = 'none', 550);
+    fitCamera();
+    // apply any model color/material tweaks after everything is loaded
+    if (typeof applyModelColors === 'function') applyModelColors();
+    if (failCount > 0) document.getElementById('server-notice').style.display = 'block';
+  }
+}
+
+function fitCamera() {
+  const box = new THREE.Box3().setFromObject(group);
+  if (box.isEmpty()) return;
+  const center = box.getCenter(new THREE.Vector3());
+  const size   = box.getSize(new THREE.Vector3());
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const fovRad = camera.fov * (Math.PI / 180);
+  const dist   = (maxDim / (2 * Math.tan(fovRad / 2))) * 1.6;
+
+  camera.near = dist / 1000;
+  camera.far  = dist * 100;
+  camera.updateProjectionMatrix();
+
+  controls.target.copy(center);
+  camera.position.copy(center).add(new THREE.Vector3(0, maxDim * 0.3, dist));
+  controls.update();
+
+  // Position axes helper at bottom-left corner of bounding box
+  axesHelper.position.copy(new THREE.Vector3(
+    box.min.x - size.x * 0.05,
+    box.min.y - size.y * 0.05,
+    box.min.z - size.z * 0.05
+  ));
+  const axisScale = maxDim * 0.12;
+  axesHelper.scale.setScalar(axisScale);
+
+  initCamPos = camera.position.clone();
+  initTarget = controls.target.clone();
+  
+  // Place lights outside the cell body (no interior glow)
+  // Use soft external point lights positioned around the model
+  const ext1 = new THREE.PointLight(0xfff6e8, 0.60, maxDim * 4.0);
+  ext1.position.copy(center).add(new THREE.Vector3(maxDim * 1.2, maxDim * 0.6, maxDim * 0.8));
+  ext1.castShadow = true;
+  ext1.shadow.mapSize.set(1024, 1024);
+  scene.add(ext1);
+
+  const ext2 = new THREE.PointLight(0x66e0ff, 0.18, maxDim * 3.5);
+  ext2.position.copy(center).add(new THREE.Vector3(-maxDim * 1.0, maxDim * 0.35, -maxDim * 0.6));
+  scene.add(ext2);
+
+  const ext3 = new THREE.PointLight(0xffe0b0, 0.14, maxDim * 3.0);
+  ext3.position.copy(center).add(new THREE.Vector3(0, -maxDim * 0.9, -maxDim * 0.9));
+  scene.add(ext3);
+
+  // Shift camera to a slightly offset external viewpoint (not inside the cell)
+  camera.position.copy(center).add(new THREE.Vector3(maxDim * 0.9, maxDim * 0.45, dist * 1.1));
+  controls.target.copy(center);
+  controls.update();
+}
+
+const loader = new OBJLoader();
+
+MODELS.forEach(def => {
+  const path = `Bacterial cell structure/model_${def.id}.obj`;
+
+  const isGlassy = def.opacity < 1;
+  // Choose fine textures for small parts, coarse for big bodies
+  const isSmall = [0, 2, 3, 8].includes(def.id);
+  const nMap = isSmall ? slimeNormalFine : slimeNormal;
+  const rMap = isSmall ? slimeRoughnessFine : slimeRoughness;
+
+  const mat = new THREE.MeshPhysicalMaterial({
+    color:              def.color,
+    roughness:          def.roughness,
+    metalness:          def.metalness,
+    clearcoat:          def.clearcoat,
+    clearcoatRoughness: def.clearcoatRoughness,
+    emissive:           new THREE.Color(def.emissive),
+    emissiveIntensity:  def.emissiveIntensity,
+    envMapIntensity:    2.2,
+    transparent:        isGlassy,
+    opacity:            def.opacity,
+    side:               isGlassy ? THREE.DoubleSide : THREE.FrontSide,
+    depthWrite:         !isGlassy,
+    // ── Slime / mucus textures ──
+    normalMap:          nMap,
+    normalScale:        new THREE.Vector2(0.35, 0.35),
+    roughnessMap:       rMap,
+    // clearcoat normal for wet micro-detail on top layer
+    clearcoatNormalMap:   nMap,
+    clearcoatNormalScale: new THREE.Vector2(0.2, 0.2),
+  });
+  // Make materials glossier by slightly lowering roughness and increasing clearcoat
+  mat.roughness = Math.max(0.02, mat.roughness * 0.5);
+  mat.clearcoat = Math.min(1.0, mat.clearcoat + 0.30);
+  matMap[def.id] = mat;
+  visible[def.id] = true;
+
+  loader.load(
+    path,
+    (obj) => {
+      obj.traverse(child => {
+        if (child.isMesh) child.material = mat;
+      });
+
+      // Pili gradient: dark at base (near cell center) → bright glowing at tips
+      if (def.id === 7) {
+        // Enable vertex colors on the pili material
+        mat.vertexColors = true;
+        mat.needsUpdate = true;
+
+        obj.traverse(child => {
+          if (!child.isMesh) return;
+          const geo = child.geometry;
+          const pos = geo.attributes.position;
+          const count = pos.count;
+
+          // Find bounding box center (approximate cell body center)
+          geo.computeBoundingBox();
+          const bb = geo.boundingBox;
+          const cx = (bb.min.x + bb.max.x) / 2;
+          const cy = (bb.min.y + bb.max.y) / 2;
+          const cz = (bb.min.z + bb.max.z) / 2;
+
+          // Find max distance from center for normalization
+          let maxDist = 0;
+          for (let i = 0; i < count; i++) {
+            const dx = pos.getX(i) - cx;
+            const dy = pos.getY(i) - cy;
+            const dz = pos.getZ(i) - cz;
+            const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (d > maxDist) maxDist = d;
+          }
+
+          // Create vertex colors: dark teal at center → bright cyan at tips
+          const colors = new Float32Array(count * 3);
+          const darkColor  = new THREE.Color(0x064038); // very dark teal
+          const brightColor = new THREE.Color(0x60f0d8); // bright glowing cyan
+
+          for (let i = 0; i < count; i++) {
+            const dx = pos.getX(i) - cx;
+            const dy = pos.getY(i) - cy;
+            const dz = pos.getZ(i) - cz;
+            const d = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            // t=0 at center (dark), t=1 at tips (bright)
+            let t = maxDist > 0 ? d / maxDist : 0;
+            // Apply easing to push brightness more towards the tips
+            t = Math.pow(t, 1.8);
+            const c = new THREE.Color().lerpColors(darkColor, brightColor, t);
+            colors[i * 3]     = c.r;
+            colors[i * 3 + 1] = c.g;
+            colors[i * 3 + 2] = c.b;
+          }
+          geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+        });
+      }
+
+      meshMap[def.id] = obj;
+      group.add(obj);
+      loadedCount++;
+      onProgress(loadedCount);
+    },
+    undefined,
+    (err) => {
+      console.warn(`model_${def.id}.obj failed:`, err.message ?? err);
+      loadedCount++;
+      failCount++;
+      onProgress(loadedCount);
+    }
+  );
+});
+
+// Apply MODELS material properties to already-created materials (live update)
+function applyModelColors() {
+  MODELS.forEach(def => {
+    const mat = matMap[def.id];
+    if (!mat) return;
+    if (def.color !== undefined) mat.color.set(def.color);
+    if (def.emissive !== undefined) mat.emissive.set(def.emissive);
+    if (def.emissiveIntensity !== undefined) mat.emissiveIntensity = def.emissiveIntensity;
+    if (def.roughness !== undefined) mat.roughness = def.roughness;
+    if (def.metalness !== undefined) mat.metalness = def.metalness;
+    if (def.clearcoat !== undefined) mat.clearcoat = def.clearcoat;
+    if (def.clearcoatRoughness !== undefined) mat.clearcoatRoughness = def.clearcoatRoughness;
+    if (def.opacity !== undefined) {
+      mat.opacity = def.opacity;
+      mat.transparent = mat.opacity < 0.99;
+      mat.depthWrite = mat.opacity >= 0.99;
+    }
+    // boost env reflections and emissive intensity for more saturated, HDR look
+    mat.envMapIntensity = def.envMapIntensity !== undefined ? def.envMapIntensity : 2.2;
+    if (def.emissiveIntensity !== undefined) mat.emissiveIntensity = def.emissiveIntensity * 1.4;
+    if (def.roughness !== undefined) mat.roughness = Math.max(0.01, def.roughness * 0.5);
+    if (def.clearcoat !== undefined) mat.clearcoat = Math.min(1.0, def.clearcoat + 0.30);
+    mat.needsUpdate = true;
+  });
+}
+
+/* ── Sidebar UI ───────────────────────────────────────────────── */
+const listEl = document.getElementById('model-list');
+
+MODELS.forEach(def => {
+  const hex = '#' + def.color.toString(16).padStart(6, '0');
+
+  const item = document.createElement('div');
+  item.className = 'model-item loading';
+  item.dataset.id = String(def.id);
+  item.title = `Click to toggle ${def.name}`;
+
+  const swatch = document.createElement('div');
+  swatch.className = 'color-swatch';
+  swatch.style.background = hex;
+
+  const name = document.createElement('div');
+  name.className = 'model-name';
+  name.textContent = def.name;
+
+  const badge = document.createElement('div');
+  badge.className = 'model-badge';
+  badge.textContent = `M${def.id}`;
+
+  item.append(swatch, name, badge);
+  listEl.appendChild(item);
+
+  item.addEventListener('click', () => {
+    visible[def.id] = !visible[def.id];
+    if (meshMap[def.id]) meshMap[def.id].visible = visible[def.id];
+    item.classList.toggle('hidden', !visible[def.id]);
+  });
+
+  // Remove 'loading' class once mesh loaded
+  const observer = setInterval(() => {
+    if (meshMap[def.id] !== undefined) {
+      item.classList.remove('loading');
+      clearInterval(observer);
+    }
+  }, 300);
+});
+
+/* Button: Show All */
+document.getElementById('btn-show-all').addEventListener('click', () => {
+  MODELS.forEach(def => {
+    visible[def.id] = true;
+    if (meshMap[def.id]) meshMap[def.id].visible = true;
+    document.querySelector(`.model-item[data-id="${def.id}"]`).classList.remove('hidden');
+  });
+});
+
+/* Button: Hide All */
+document.getElementById('btn-hide-all').addEventListener('click', () => {
+  MODELS.forEach(def => {
+    visible[def.id] = false;
+    if (meshMap[def.id]) meshMap[def.id].visible = false;
+    document.querySelector(`.model-item[data-id="${def.id}"]`).classList.add('hidden');
+  });
+});
+
+/* Button: Wireframe */
+let wireframe = false;
+const wireBtn = document.getElementById('btn-wireframe');
+wireBtn.addEventListener('click', () => {
+  wireframe = !wireframe;
+  MODELS.forEach(def => { if (matMap[def.id]) matMap[def.id].wireframe = wireframe; });
+  wireBtn.classList.toggle('active', wireframe);
+  wireBtn.textContent = wireframe ? 'Solid' : 'Wireframe';
+});
+
+/* Button: Flat shading */
+let flat = false;
+const flatBtn = document.getElementById('btn-flat');
+flatBtn.addEventListener('click', () => {
+  flat = !flat;
+  MODELS.forEach(def => {
+    if (matMap[def.id]) {
+      matMap[def.id].flatShading = flat;
+      matMap[def.id].needsUpdate = true;
+    }
+  });
+  flatBtn.classList.toggle('active', flat);
+  flatBtn.textContent = flat ? 'Smooth' : 'Flat Shading';
+});
+
+/* Button: Reset camera */
+document.getElementById('btn-reset-cam').addEventListener('click', () => {
+  if (!initCamPos) return;
+  camera.position.copy(initCamPos);
+  controls.target.copy(initTarget);
+  controls.update();
+});
+
+/* Opacity slider */
+const opacitySlider = document.getElementById('opacity-slider');
+const opacityLabel  = document.getElementById('opacity-value');
+opacitySlider.addEventListener('input', () => {
+  const val = Number(opacitySlider.value) / 100;
+  opacityLabel.textContent = `${opacitySlider.value}%`;
+  MODELS.forEach(def => {
+    if (matMap[def.id]) {
+      // For capsule keep its intrinsic opacity, scale others
+      const base = def.opacity;
+      const final = base * val;
+      matMap[def.id].opacity      = final;
+      matMap[def.id].transparent  = final < 0.99;
+      matMap[def.id].depthWrite   = final >= 0.99;
+      matMap[def.id].needsUpdate  = true;
+    }
+  });
+});
+
+/* Dismiss server notice */
+document.getElementById('dismiss-notice').addEventListener('click', () => {
+  document.getElementById('server-notice').style.display = 'none';
+});
+// Apply any color tweaks immediately if materials already exist
+if (typeof applyModelColors === 'function') applyModelColors();
+</script>
+</body>
+</html>

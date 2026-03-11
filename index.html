@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>InsideBacteria — Struktur Sel Bakteri 3D</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ═══ Navbar ═══════════════════════════════════════════════ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-brand">
+    <span>🧬</span> InsideBacteria
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html" class="active">Beranda</a></li>
+    <li><a href="info.html">Pelajari</a></li>
+    <li><a href="viewer.html">3D Viewer</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+</nav>
+
+<!-- ═══ Hero ═════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-text">
+      <div class="hero-badge">🔬 Biologi Interaktif</div>
+      <h1 class="hero-title">
+        Jelajahi <span class="grad">Sel Bakteri</span> dalam 3D
+      </h1>
+      <p class="hero-desc">
+        Pelajari struktur sel bakteri secara interaktif dengan model 3D yang bisa kamu putar, zoom, dan klik setiap bagiannya.
+      </p>
+      <div class="hero-buttons">
+        <a href="viewer.html" class="btn btn-primary">🚀 Buka 3D Viewer</a>
+        <a href="info.html" class="btn btn-secondary">📖 Baca Penjelasan</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="particle particle-1">🧫</div>
+      <div class="particle particle-2">🔬</div>
+      <div class="particle particle-3">⚡</div>
+      <div class="particle particle-4">🧪</div>
+      <div class="particle particle-5">💊</div>
+      <div class="hero-cell">🦠</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Features ═════════════════════════════════════════════ -->
+<section class="features">
+  <h2 class="section-title">Kenapa Belajar di Sini?</h2>
+  <p class="section-sub">Cara seru buat memahami dunia mikroskopis!</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon" style="background: rgba(34,211,238,0.12); color: var(--cyan);">🎮</div>
+      <h3>Model 3D Interaktif</h3>
+      <p>Putar, zoom, dan jelajahi model sel bakteri 3D langsung di browser — tanpa perlu install apapun!</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background: rgba(167,139,250,0.12); color: var(--purple);">📍</div>
+      <h3>Titik Penjelasan</h3>
+      <p>Klik titik-titik pada model untuk melihat penjelasan detail setiap bagian sel bakteri.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon" style="background: rgba(244,114,182,0.12); color: var(--pink);">🧠</div>
+      <h3>Fakta Seru</h3>
+      <p>Temukan fakta-fakta menarik tentang bakteri yang bikin kamu makin penasaran!</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Fun Facts ════════════════════════════════════════════ -->
+<section class="fun-facts">
+  <h2 class="section-title">Tahukah Kamu?</h2>
+  <p class="section-sub">Fakta menakjubkan tentang bakteri</p>
+  <div class="facts-grid">
+    <div class="fact-card">
+      <div class="fact-icon">🌍</div>
+      <p>Jumlah bakteri di bumi diperkirakan <strong>5 × 10³⁰</strong> — lebih banyak dari bintang di alam semesta!</p>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">🏋️</div>
+      <p>Bakteri <em>E. coli</em> bisa membelah diri setiap <strong>20 menit</strong>. Dalam 24 jam, 1 bakteri jadi miliaran!</p>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">🧬</div>
+      <p>Bakteri punya <strong>DNA melingkar</strong> tanpa membran inti — berbeda dari sel manusia yang punya nukleus.</p>
+    </div>
+    <div class="fact-card">
+      <div class="fact-icon">🦾</div>
+      <p>Beberapa bakteri bisa bertahan di luar angkasa dan suhu ekstrem hingga <strong>120°C</strong>!</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ Footer ═══════════════════════════════════════════════ -->
+<footer class="footer">
+  <p>Created with ❤️ by widy4aa</p>
+</footer>
+
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const navbar = document.getElementById('navbar');
+  hamburger.addEventListener('click', () => navbar.classList.toggle('open'));
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => navbar.classList.remove('open'));
+  });
+</script>
+</body>
+</html>

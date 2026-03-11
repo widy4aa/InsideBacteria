@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pelajari Sel Bakteri — InsideBacteria</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ═══ Navbar ═══════════════════════════════════════════════ -->
+<nav class="navbar" id="navbar">
+  <div class="nav-brand">
+    <span>🧬</span> InsideBacteria
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html">Beranda</a></li>
+    <li><a href="info.html" class="active">Pelajari</a></li>
+    <li><a href="viewer.html">3D Viewer</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+</nav>
+
+<!-- ═══ Info Page ════════════════════════════════════════════ -->
+<div class="info-page">
+  <div class="info-header">
+    <h1 class="section-title">Struktur <span style="color: var(--cyan);">Sel Bakteri</span></h1>
+    <p class="section-sub">Pelajari komponen-komponen penyusun sel bakteri secara mendalam. Ketuk kartu untuk membuka penjelasan lengkap! 🔬</p>
+  </div>
+
+  <div class="org-grid">
+
+    <!-- 1. Plasmid -->
+    <div class="org-card" style="--org-color: #a78bfa" onclick="this.classList.toggle('expanded')">
+      <div class="org-top">
+        <span class="org-emoji">🔮</span>
+        <div>
+          <div class="org-title">Plasmid</div>
+          <div class="org-subtitle">Plasmid — DNA Ekstra-kromosomal</div>
+        </div>
+      </div>
+      <div class="org-desc">
+        Plasmid adalah molekul DNA berbentuk <strong>lingkaran kecil</strong> yang berada di dalam sitoplasma bakteri, namun sepenuhnya terpisah dari DNA kromosom utama (nukleoid). Ukurannya jauh lebih kecil dibanding kromosom — biasanya hanya mengandung beberapa gen hingga puluhan gen saja. Plasmid mampu bereplikasi secara independen (mandiri) tanpa bergantung pada replikasi kromosom utama.
+        <br><br>
+        <strong>Fungsi Utama:</strong> Plasmid membawa gen-gen tambahan yang memberikan keuntungan adaptif bagi bakteri, antara lain gen resistensi antibiotik (R-plasmid), gen produksi toksin, gen untuk metabolisme zat tertentu, serta gen yang memungkinkan bakteri bertahan di lingkungan ekstrem. Plasmid dapat berpindah dari satu bakteri ke bakteri lain melalui proses <em>konjugasi</em> (transfer horizontal), yang menjadi salah satu mekanisme utama penyebaran resistensi antibiotik di populasi bakteri.
+      </div>
+      <div class="org-fun">
+        <span class="fun-label">💡 Fakta Seru &amp; Aplikasi</span>
+        Dalam bioteknologi modern, plasmid dimanfaatkan sebagai <strong>vektor kloning</strong> — kendaraan pembawa gen asing ke dalam bakteri. Teknik ini digunakan untuk memproduksi insulin rekombinan bagi penderita diabetes, vaksin hepatitis B, hormon pertumbuhan manusia, hingga enzim industri. Satu bakteri bisa mengandung lebih dari satu jenis plasmid secara bersamaan. Menariknya, beberapa plasmid bersifat "tidak kompatibel" — mereka tidak bisa hidup berdampingan dalam sel yang sama karena sistem replikasinya saling berkompetisi!
+      </div>
+      <div class="expand-hint">Ketuk untuk penjelasan lengkap ✨</div>
+    </div>
+
+    <!-- 2. DNA Sirkuler -->
+    <div class="org-card" style="--org-color: #c084fc" onclick="this.classList.toggle('expanded')">
+      <div class="org-top">
+        <span class="org-emoji">🧬</span>
+        <div>
+          <div class="org-title">DNA Sirkuler</div>
+          <div class="org-subtitle">Circular DNA — Nukleoid</div>
+        </div>
+      </div>
+      <div class="org-desc">
+        DNA sirkuler adalah <strong>materi genetik utama</strong> bakteri yang berbentuk cincin melingkar (sirkular) tanpa ujung bebas. Berbeda dengan sel eukariotik (hewan, tumbuhan), DNA bakteri tidak terbungkus di dalam membran inti — melainkan tersebar di wilayah sitoplasma yang disebut <em>nukleoid</em>. DNA ini tersusun dari untai ganda (double-stranded) dan mengandung seluruh informasi genetik esensial yang dibutuhkan bakteri untuk tumbuh, bereproduksi, dan bertahan hidup.
+        <br><br>
+        <strong>Struktur &amp; Organisasi:</strong> Meskipun tidak memiliki histon seperti eukariot, DNA bakteri tetap dikemas secara kompak dengan bantuan protein-protein nukloid-associated (NAPs) seperti HU, IHF, dan H-NS. DNA ini mengalami <em>supercoiling</em> (pelilitan berlebih) yang memungkinkan molekul DNA sepanjang ~1,6 mm dikemas dalam sel berukuran hanya 1–2 mikrometer. Nukleoid bukanlah organel bermembran — ia merupakan area terkonsentrasi tempat DNA berada, dan dapat diamati dengan pewarnaan khusus di bawah mikroskop.
+      </div>
+      <div class="org-fun">
+        <span class="fun-label">💡 Fakta Seru &amp; Perbandingan</span>
+        Bakteri <em>Escherichia coli</em> memiliki ~4,6 juta pasang basa dalam DNA sirkulernya, mengkode sekitar 4.300 gen. Jika direntangkan, DNA-nya mencapai 1,6 mm — <strong>800 kali lebih panjang</strong> dari sel bakterinya sendiri! Bandingkan dengan bakteri <em>Mycoplasma genitalium</em> yang hanya punya ~580.000 pasang basa — genom terkecil di antara organisme hidup mandiri. Proses replikasi DNA sirkuler dimulai dari satu titik asal (<em>origin of replication</em>) dan berjalan secara bidireksional hingga keduanya bertemu di sisi berlawanan.
+      </div>
+      <div class="expand-hint">Ketuk untuk penjelasan lengkap ✨</div>
+    </div>
+
+    <!-- 3. Flagellum -->
+    <div class="org-card" style="--org-color: #22d3ee" onclick="this.classList.toggle('expanded')">
+      <div class="org-top">
+        <span class="org-emoji">🏊</span>
+        <div>
+          <div class="org-title">Flagellum</div>
+          <div class="org-subtitle">Flagellum — Alat Gerak Bakteri</div>
+        </div>
+      </div>
+      <div class="org-desc">
+        Flagellum (jamak: flagela) adalah struktur panjang menyerupai <strong>cambuk</strong> yang tumbuh dari permukaan sel bakteri dan berfungsi sebagai alat gerak utama. Flagellum tersusun dari tiga bagian utama: <em>filamen</em> (bagian panjang yang menjulur keluar, terbuat dari protein flagellin), <em>hook</em> (penghubung fleksibel antara filamen dan basal body), dan <em>basal body</em> (motor berputar yang tertanam di membran sel dan dinding sel).
+        <br><br>
+        <strong>Mekanisme Kerja:</strong> Basal body bekerja layaknya motor listrik biologis — menggunakan gradien proton (H⁺) atau ion natrium (Na⁺) sebagai sumber energi untuk memutar filamen. Saat flagellum berputar berlawanan arah jarum jam (CCW), bakteri berenang lurus ke depan (<em>run</em>). Saat berputar searah jarum jam (CW), bakteri melakukan gerakan jatuh/berputar di tempat (<em>tumble</em>). Pola run-and-tumble ini memungkinkan bakteri melakukan <em>kemotaksis</em> — bergerak menuju nutrisi atau menjauhi zat berbahaya.
+      </div>
+      <div class="org-fun">
+        <span class="fun-label">💡 Fakta Seru &amp; Klasifikasi</span>
+        Motor flagellum mampu berputar hingga <strong>1.000–1.500 putaran per detik</strong> — menjadikannya salah satu mesin nano paling efisien di alam! Berdasarkan jumlah dan posisi flagela, bakteri diklasifikasikan menjadi: <em>monotrik</em> (1 flagellum di satu ujung), <em>amfitrik</em> (1 flagellum di masing-masing ujung), <em>lofotrik</em> (sekelompok flagela di satu ujung), dan <em>peritrik</em> (flagela tersebar di seluruh permukaan, seperti pada <em>E. coli</em>). Ada juga bakteri tanpa flagellum (atrik) yang bergerak dengan cara lain seperti <em>gliding motility</em>. Motor flagellum menjadi inspirasi para ilmuwan nanoteknologi!
+      </div>
+      <div class="expand-hint">Ketuk untuk penjelasan lengkap ✨</div>
+    </div>
+
+    <!-- 4. Kapsul -->
+    <div class="org-card" style="--org-color: #14b8a6" onclick="this.classList.toggle('expanded')">
+      <div class="org-top">
+        <span class="org-emoji">🛡️</span>
+        <div>
+          <div class="org-title">Kapsul</div>
+          <div class="org-subtitle">Capsule — Lapisan Pelindung Luar</div>
+        </div>
+      </div>
+      <div class="org-desc">
+        Kapsul adalah lapisan tebal dan terorganisir yang melapisi bagian <strong>paling luar</strong> sel bakteri, di atas dinding sel. Kapsul umumnya tersusun dari <em>polisakarida</em> (rantai gula panjang), meskipun pada beberapa spesies seperti <em>Bacillus anthracis</em> kapsulnya terbuat dari polipeptida (asam poli-D-glutamat). Tidak semua bakteri memiliki kapsul — ini adalah struktur opsional yang sangat menguntungkan bagi bakteri patogen.
+        <br><br>
+        <strong>Fungsi Utama:</strong> (1) <em>Pelindung dari fagositosis</em> — kapsul membuat permukaan bakteri licin sehingga sel darah putih (fagosit) kesulitan menangkap dan menelan bakteri. (2) <em>Mencegah dehidrasi</em> — lapisan kapsul menahan air dan melindungi bakteri dari kekeringan. (3) <em>Adhesi</em> — membantu bakteri menempel pada permukaan jaringan inang atau material lain untuk membentuk koloni. (4) <em>Resistensi terhadap antimikroba</em> — kapsul dapat menghalangi penetrasi beberapa agen antimikroba. Kapsul juga berperan penting dalam pembentukan <em>biofilm</em>.
+      </div>
+      <div class="org-fun">
+        <span class="fun-label">💡 Fakta Seru &amp; Sejarah</span>
+        Eksperimen legendaris <strong>Frederick Griffith (1928)</strong> menggunakan bakteri berkapsul <em>Streptococcus pneumoniae</em> untuk menemukan fenomena transformasi — bakteri mati yang berkapsul bisa "mentransfer" sifat virulensinya ke bakteri hidup tanpa kapsul! Percobaan ini menjadi langkah awal penemuan bahwa DNA adalah materi genetik. Dalam dunia medis, bakteri berkapsul umumnya lebih <em>virulen</em> (berbahaya) karena mampu menghindari sistem imun. Vaksin terhadap penyakit pneumonia, meningitis, dan <em>Haemophilus influenzae</em> dirancang untuk menarget polisakarida kapsul bakteri tertentu.
+      </div>
+      <div class="expand-hint">Ketuk untuk penjelasan lengkap ✨</div>
+    </div>
+
+    <!-- 5. Dinding Sel -->
+    <div class="org-card" style="--org-color: #34d399" onclick="this.classList.toggle('expanded')">
+      <div class="org-top">
+        <span class="org-emoji">🧱</span>
+        <div>
+          <div class="org-title">Dinding Sel</div>
+          <div class="org-subtitle">Cell Wall — Peptidoglikan</div>
+        </div>
+      </div>
+      <div class="org-desc">
+        Dinding sel bakteri adalah lapisan kaku dan kuat yang terletak di antara membran sel (di dalam) dan kapsul (di luar, jika ada). Fungsi utamanya adalah <strong>memberikan bentuk dan rigiditas</strong> pada sel bakteri serta melindungi sel dari lisis osmotik — yaitu pecahnya sel akibat tekanan air yang masuk berlebihan. Komponen utama dinding sel bakteri adalah <em>peptidoglikan</em> (juga disebut murein), yaitu polimer yang tersusun dari rantai gula N-asetilglukosamin (NAG) dan asam N-asetilmuramat (NAM) yang saling terhubung oleh jembatan peptida.
+        <br><br>
+        <strong>Gram Positif vs Gram Negatif:</strong> Berdasarkan struktur dinding selnya, bakteri dibagi menjadi dua kelompok besar melalui teknik pewarnaan Gram. <em>Bakteri Gram positif</em> memiliki lapisan peptidoglikan tebal (20–80 nm) dengan asam teikoat yang tertanam di dalamnya — mereka mempertahankan pewarna kristal violet sehingga tampak ungu di bawah mikroskop. <em>Bakteri Gram negatif</em> memiliki lapisan peptidoglikan tipis (1–3 nm) tetapi dilengkapi membran luar tambahan yang mengandung lipopolisakarida (LPS/endotoksin) — mereka melepas pewarna violet saat dicuci alkohol dan menyerap safranin sehingga tampak merah/merah muda.
+      </div>
+      <div class="org-fun">
+        <span class="fun-label">💡 Fakta Seru &amp; Relevansi Medis</span>
+        Antibiotik golongan <strong>beta-laktam</strong> (penisilin, amoksisilin, sefalosporin) bekerja dengan menghambat enzim transpeptidase yang dibutuhkan untuk membentuk jembatan peptida pada peptidoglikan. Tanpa dinding sel yang utuh, bakteri tidak mampu menahan tekanan osmotik dan akhirnya <em>lisis</em> (pecah). Itulah mengapa antibiotik ini efektif membunuh bakteri yang sedang aktif membelah namun tidak merusak sel manusia — karena sel manusia tidak memiliki peptidoglikan! Lisozim yang terdapat dalam air mata, air liur, dan mukus juga bekerja dengan memecah ikatan glikosidik pada peptidoglikan sebagai pertahanan alami tubuh kita. Bakteri tanpa dinding sel (seperti genus <em>Mycoplasma</em>) secara alami resisten terhadap penisilin.
+      </div>
+      <div class="expand-hint">Ketuk untuk penjelasan lengkap ✨</div>
+    </div>
+
+    <!-- 6. Membran Sel -->
+    <div class="org-card" style="--org-color: #fbbf24" onclick="this.classList.toggle('expanded')">
+      <div class="org-top">
+        <span class="org-emoji">🫧</span>
+        <div>
+          <div class="org-title">Membran Sel</div>
+          <div class="org-subtitle">Cell Membrane — Membran Plasma</div>
+        </div>
+      </div>
+      <div class="org-desc">
+        Membran sel (membran plasma) adalah lapisan tipis fleksibel berketebalan sekitar <strong>7–8 nanometer</strong> yang menyelimuti seluruh isi sel bakteri. Strukturnya berupa <em>fosfolipid bilayer</em> — dua lapis molekul fosfolipid yang tersusun dengan kepala hidrofilik (menyukai air) menghadap ke luar dan ekor hidrofobik (menolak air) saling berhadapan di bagian dalam. Tersisip di antara fosfolipid terdapat berbagai <em>protein integral</em> dan <em>protein perifer</em> yang menjalankan beragam fungsi penting.
+        <br><br>
+        <strong>Fungsi Utama:</strong> (1) <em>Permeabilitas selektif</em> — mengontrol transportasi zat masuk dan keluar sel melalui transport pasif (difusi, osmosis) maupun aktif (pompa ion, ABC transporter). (2) <em>Produksi energi</em> — pada bakteri, membran sel adalah tempat berlangsungnya rantai transpor elektron dan fosforilasi oksidatif (karena bakteri tidak memiliki mitokondria), sehingga membran sel berfungsi layaknya mitokondria pada eukariot. (3) <em>Sintesis dinding sel</em> — enzim-enzim pembentuk peptidoglikan berlokasi di membran. (4) <em>Sekresi protein</em> — sistem sekresi bakteri tertanam di membran untuk mengekspor protein ke luar sel.
+      </div>
+      <div class="org-fun">
+        <span class="fun-label">💡 Fakta Seru &amp; Perbedaan Kunci</span>
+        Berbeda dengan sel eukariotik (hewan), membran sel bakteri <strong>tidak mengandung kolesterol</strong>. Namun beberapa bakteri mengandung sterol-like molecules yang disebut <em>hopanoid</em> yang berfungsi serupa — menjaga stabilitas dan fluiditas membran. Struktur membran sel mengikuti model <em>mosaik fluida</em> yang dikemukakan oleh Singer &amp; Nicolson (1972), di mana protein-protein "mengapung" dan bergerak bebas di lautan fosfolipid. Pada bakteri Gram negatif, terdapat dua membran: membran dalam (membran plasma) dan membran luar — ruang di antaranya disebut <em>periplasma</em>, yang berisi berbagai enzim penting termasuk beta-laktamase yang mampu menonaktifkan antibiotik penisilin.
+      </div>
+      <div class="expand-hint">Ketuk untuk penjelasan lengkap ✨</div>
+    </div>
+
+    <!-- 7. Pili -->
+    <div class="org-card" style="--org-color: #06b6d4" onclick="this.classList.toggle('expanded')">
+      <div class="org-top">
+        <span class="org-emoji">🦑</span>
+        <div>
+          <div class="org-title">Pili</div>
+          <div class="org-subtitle">Pili / Fimbriae — Tonjolan Protein Permukaan</div>
+        </div>
+      </div>
+      <div class="org-desc">
+        Pili (tunggal: pilus) dan fimbriae adalah struktur berbentuk <strong>rambut-rambut halus pendek</strong> yang menjulur dari permukaan sel bakteri. Keduanya tersusun dari subunit protein yang disebut <em>pilin</em>, yang tersusun membentuk tabung berongga dengan diameter sekitar 3–10 nm. Meskipun sering digunakan secara bergantian, secara teknis pili dan fimbriae memiliki perbedaan: fimbriae umumnya lebih pendek, jumlahnya lebih banyak (ratusan per sel), dan berfungsi utama untuk <em>adhesi</em> (penempelan).
+        <br><br>
+        <strong>Jenis-jenis Pili:</strong> (1) <em>Fimbriae/Pili tipe 1</em> — berfungsi untuk menempel pada sel inang, permukaan benda mati, atau bakteri lain, sehingga berperan penting dalam kolonisasi dan pembentukan biofilm. (2) <em>Pilus seks (F-pilus / pilus konjugasi)</em> — struktur yang lebih panjang dan berjumlah sedikit (1–2 per sel), berfungsi sebagai "jembatan" untuk mentransfer DNA (biasanya plasmid) dari bakteri donor ke bakteri resipien melalui proses <em>konjugasi</em>. (3) <em>Pilus tipe IV</em> — bisa memanjang dan memendek secara dinamis, memungkinkan bakteri melakukan gerakan <em>twitching motility</em> (bergerak di permukaan padat).
+      </div>
+      <div class="org-fun">
+        <span class="fun-label">💡 Fakta Seru &amp; Relevansi Medis</span>
+        Pili memainkan peran kritis dalam <strong>patogenesis</strong> (kemampuan bakteri menyebabkan penyakit). Contohnya, bakteri <em>E. coli</em> uropatogenik (UPEC) menggunakan fimbriae tipe 1 untuk menempel pada sel epitel saluran kemih — langkah pertama infeksi saluran kemih (ISK). Bakteri <em>Neisseria gonorrhoeae</em> (penyebab gonore) membutuhkan pili tipe IV untuk menempel pada sel mukosa. Tanpa pili, bakteri-bakteri ini kehilangan kemampuan menginfeksi! Satu bakteri <em>E. coli</em> bisa memiliki <strong>100–1.000 fimbriae</strong> sekaligus. Ilmuwan kini mengembangkan strategi anti-adhesin — obat yang memblokir pili bakteri sehingga mereka tidak bisa menempel, sebagai alternatif antibiotik.
+      </div>
+      <div class="expand-hint">Ketuk untuk penjelasan lengkap ✨</div>
+    </div>
+
+    <!-- 8. Ribosom -->
+    <div class="org-card" style="--org-color: #f87171" onclick="this.classList.toggle('expanded')">
+      <div class="org-top">
+        <span class="org-emoji">🔩</span>
+        <div>
+          <div class="org-title">Ribosom</div>
+          <div class="org-subtitle">Ribosome — Mesin Sintesis Protein</div>
+        </div>
+      </div>
+      <div class="org-desc">
+        Ribosom adalah <strong>organel kecil tanpa membran</strong> yang berfungsi sebagai "mesin" pembuat protein, berdiameter sekitar 20–30 nm. Ribosom bakteri bertipe <strong>70S</strong>, tersusun dari dua subunit: subunit kecil <em>30S</em> (berisi rRNA 16S dan ~21 protein) dan subunit besar <em>50S</em> (berisi rRNA 23S, rRNA 5S, dan ~31 protein). Huruf "S" mengacu pada satuan <em>Svedberg</em>, yang mengukur laju sedimentasi partikel saat disentrifugasi — bukan massa.
+        <br><br>
+        <strong>Proses Translasi:</strong> Ribosom bekerja dengan membaca pesan genetik berupa <em>mRNA</em> (messenger RNA) yang disalin dari DNA, kemudian menerjemahkannya menjadi rantai asam amino (polipeptida) sesuai kode genetik. Prosesnya: (1) <em>Inisiasi</em> — subunit 30S mengenali sekuens Shine-Dalgarno pada mRNA dan tRNA inisiator membawa metionin. (2) <em>Elongasi</em> — tRNA membawa asam amino sesuai kodon pada mRNA, ikatan peptida terbentuk di pusat peptidil transferase subunit 50S. (3) <em>Terminasi</em> — ribosom mencapai kodon stop dan melepas rantai protein yang sudah selesai. Ribosom bakteri bahkan bisa memulai translasi <em>sebelum transkripsi selesai</em> karena tidak ada membran inti!
+      </div>
+      <div class="org-fun">
+        <span class="fun-label">💡 Fakta Seru &amp; Target Antibiotik</span>
+        Perbedaan antara ribosom bakteri (70S) dan ribosom manusia (80S) adalah <strong>celah emas bagi antibiotik</strong>! Banyak antibiotik penting yang bekerja dengan menarget ribosom 70S: <em>tetrasiklin</em> memblokir situs A di subunit 30S, <em>kloramfenikol</em> menghambat peptidil transferase di subunit 50S, <em>eritromisin</em> menyumbat terowongan tempat rantai peptida keluar di subunit 50S, dan <em>streptomisin</em> menyebabkan ribosom salah membaca kode genetik. Satu sel <em>E. coli</em> yang sedang tumbuh aktif bisa mengandung <strong>15.000–70.000 ribosom</strong>, yang mengisi sekitar 25% massa total sel! Ribosom harus bekerja nonstop — satu ribosom mampu menambahkan ~20 asam amino per detik ke rantai protein yang sedang dibuat.
+      </div>
+      <div class="expand-hint">Ketuk untuk penjelasan lengkap ✨</div>
+    </div>
+
+    <!-- 9. Sitoplasma -->
+    <div class="org-card" style="--org-color: #94a3b8" onclick="this.classList.toggle('expanded')">
+      <div class="org-top">
+        <span class="org-emoji">🫠</span>
+        <div>
+          <div class="org-title">Sitoplasma</div>
+          <div class="org-subtitle">Cytoplasm — Matriks Intraseluler</div>
+        </div>
+      </div>
+      <div class="org-desc">
+        Sitoplasma adalah <strong>cairan kental semi-transparan</strong> (koloid) yang mengisi seluruh ruang di dalam membran sel bakteri. Komposisinya sekitar 70–80% air, sisanya berupa enzim, ion anorganik, gula, lipid, asam amino, ribosom, dan berbagai molekul organik lainnya. Pada bakteri, sitoplasma merupakan satu-satunya kompartemen utama sel (tidak tersekat oleh organel bermembran seperti pada eukariot).
+        <br><br>
+        <strong>Fungsi &amp; Komponen Penting:</strong> Sitoplasma adalah "arena" tempat hampir semua proses metabolisme berlangsung: (1) <em>Glikolisis</em> — pemecahan glukosa menjadi piruvat untuk menghasilkan energi (ATP). (2) <em>Transkripsi</em> — penyalinan informasi dari DNA menjadi mRNA oleh enzim RNA polimerase. (3) <em>Translasi</em> — ribosom yang terdispersi di sitoplasma menerjemahkan mRNA menjadi protein. (4) <em>Biosintesis</em> — produksi asam amino, nukleotida, dan molekul penting lainnya. Di dalam sitoplasma juga terdapat <em>granula penyimpanan</em> (badan inklusi) yang menyimpan cadangan energi berupa glikogen, polifosfat, polihidroksibutirat (PHB), atau belerang, tergantung spesies bakterinya.
+      </div>
+      <div class="org-fun">
+        <span class="fun-label">💡 Fakta Seru &amp; Keunikan</span>
+        Berbeda dengan sitoplasma sel eukariotik yang memiliki organel bermembran (mitokondria, RE, badan Golgi), sitoplasma bakteri tampak lebih "sederhana" — namun justru di sinilah <strong>semua proses kehidupan terkonsentrasi</strong> dalam satu ruang terbuka! Sitoplasma bakteri jauh lebih padat dan crowded ("sesak molekul") dibanding yang dibayangkan — konsentrasi makromolekul di dalamnya mencapai 300–400 mg/mL, menciptakan efek <em>molecular crowding</em> yang mempengaruhi kecepatan reaksi enzimatis dan pelipatan protein. Sitoplasma juga memiliki <em>cytoskeletal elements</em> seperti protein FtsZ (homolog tubulin) yang berperan krusial dalam pembelahan sel, dan MreB (homolog aktin) yang menjaga bentuk sel bakteri batang.
+      </div>
+      <div class="expand-hint">Ketuk untuk penjelasan lengkap ✨</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ Footer ═══════════════════════════════════════════════ -->
+<footer class="footer">
+  <p>Created with ❤️ by widy4aa</p>
+</footer>
+
+<script>
+  const hamburger = document.getElementById('hamburger');
+  const navbar = document.getElementById('navbar');
+  hamburger.addEventListener('click', () => navbar.classList.toggle('open'));
+  document.querySelectorAll('.nav-links a').forEach(a => {
+    a.addEventListener('click', () => navbar.classList.remove('open'));
+  });
+</script>
+</body>
+</html>
