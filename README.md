@@ -111,6 +111,24 @@ Isi utamanya:
 
 Kesimpulannya: `index.html` tidak berat secara logika. Tugasnya lebih ke menyusun isi halaman depan.
 
+Contoh kode dari `index.html`:
+
+```html
+<nav class="navbar" id="navbar">
+  <div class="nav-brand">
+    <span>🧬</span> InsideBacteria
+  </div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="index.html" class="active">Beranda</a></li>
+    <li><a href="info.html">Pelajari</a></li>
+    <li><a href="viewer.html">3D Viewer</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Menu">☰</button>
+</nav>
+```
+
+Potongan ini menunjukkan bahwa halaman depan punya navbar sederhana yang menghubungkan semua halaman utama.
+
 ---
 
 ### `info.html` — Halaman Materi / Penjelasan Organel
@@ -135,6 +153,25 @@ Bagian penting yang perlu dipahami:
   CSS kemudian membaca class ini untuk menentukan apakah bagian detail ditampilkan atau tidak.
 
 Jadi halaman ini sebenarnya sederhana: data penjelasan ditulis langsung di HTML, lalu CSS yang mengatur animasi buka-tutup kartunya.
+
+Contoh kode dari `info.html`:
+
+```html
+<div class="org-card" style="--org-color: #a78bfa" onclick="this.classList.toggle('expanded')">
+  <div class="org-top">
+    <span class="org-emoji">🔮</span>
+    <div>
+      <div class="org-title">Plasmid</div>
+      <div class="org-subtitle">DNA Ekstra-kromosomal</div>
+    </div>
+  </div>
+  <div class="org-desc">
+    Plasmid adalah molekul DNA berbentuk lingkaran kecil yang terpisah dari DNA utama.
+  </div>
+</div>
+```
+
+Baris `onclick="this.classList.toggle('expanded')"` adalah kunci efek buka-tutup kartu ini.
 
 ---
 
@@ -173,6 +210,24 @@ Bagian utamanya:
 
 Jadi `viewer.html` tidak berisi logika 3D yang kompleks. Ia lebih seperti “tempat duduk” untuk semua fitur yang dikendalikan oleh JavaScript.
 
+Contoh kode dari `viewer.html`:
+
+```html
+<div id="viewer-wrap">
+  <canvas id="three-canvas"></canvas>
+
+  <div id="loading">
+    <div class="spinner"></div>
+    <div class="progress-wrap"><div id="progress-bar"></div></div>
+    <div id="load-label">Memuat model…</div>
+  </div>
+</div>
+
+<script type="module" src="script.js"></script>
+```
+
+Di sini terlihat bahwa viewer menyiapkan area canvas, loading screen, lalu menyerahkan logika utamanya ke `script.js`.
+
 ---
 
 ### `style.css` — Seluruh Tampilan Website
@@ -193,6 +248,21 @@ Di bagian `:root`, didefinisikan banyak variabel seperti:
 - `--font-sci`
 
 Tujuannya supaya warna dan font mudah dipakai ulang. Daripada menulis warna berkali-kali, cukup panggil variabelnya.
+
+Contoh kode dari `style.css`:
+
+```css
+:root {
+  --bg-deep: #06080e;
+  --cyan: #22d3ee;
+  --purple: #a78bfa;
+  --text: #e2e8f0;
+  --font-body: 'Nunito', sans-serif;
+  --font-sci: 'Orbitron', sans-serif;
+}
+```
+
+Jadi kalau warna cyan ingin diganti, cukup ubah satu tempat, lalu semua bagian yang memakai `var(--cyan)` akan ikut berubah.
 
 #### B. Background global
 
@@ -292,6 +362,17 @@ Kalau dijelaskan dengan bahasa awam, `script.js` melakukan pekerjaan berikut:
 
 Di bawah ini penjelasan per blok.
 
+Contoh pembuka kode dari `script.js`:
+
+```js
+import * as THREE from 'three';
+import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+```
+
+Potongan ini menunjukkan bahwa viewer 3D dibangun memakai modul-modul dari Three.js, bukan JavaScript murni tanpa library.
+
 #### A. Import library
 
 Baris paling atas mengimpor beberapa komponen dari Three.js:
@@ -346,6 +427,26 @@ Setiap organel punya:
 
 Jadi popup informasi dan tombol fokus organel mengambil data dari sini.
 
+Contoh kode data `ORGANELLES`:
+
+```js
+{
+  num: 1,
+  name: 'Plasmid',
+  sub: 'DNA Ekstra-kromosomal',
+  modelId: 0,
+  icon: '🔮',
+  color: '#a78bfa',
+  desc: 'Molekul DNA kecil berbentuk lingkaran yang terpisah dari DNA kromosom utama.',
+  detail: [
+    'Membawa gen resistensi antibiotik',
+    'Bisa dipindahkan ke bakteri lain lewat konjugasi'
+  ]
+}
+```
+
+Artinya satu objek organel langsung menyimpan semua informasi yang dibutuhkan untuk label, warna, dan popup.
+
 #### D. Konfigurasi label
 
 Bagian `LABEL_LOCATION_CONFIG` mengatur posisi label agar menempel di tempat yang tepat pada model.
@@ -359,6 +460,22 @@ anchorsByModelId: {
 ```
 
 Angka ini berarti: label untuk model tertentu digeser di sumbu X, Y, Z relatif terhadap ukuran model.
+
+Contoh kode konfigurasi label:
+
+```js
+const LABEL_LOCATION_CONFIG = {
+  labelEditable: 1,
+  showGuideLines: false,
+  fallbackAnchor: [0.15, 0.35, 0.15],
+  anchorsByModelId: {
+    0: [0.20, 0.35, 0.30],
+    1: [-0.20, 0.28, 0.30]
+  }
+};
+```
+
+Jadi posisi label tidak ditebak browser, tetapi memang diatur dan bisa dikalibrasi.
 
 Fungsi penting di bagian ini:
 
@@ -418,6 +535,22 @@ mengubah pola itu menjadi tekstur yang bisa dipasang ke material 3D.
 
 Artinya, proyek ini tidak hanya memberi warna datar ke model, tapi juga membuat kesan permukaan lendir/lunak khas bakteri.
 
+Contoh kode fungsi sederhana pembuat noise:
+
+```js
+function fbm(x, y, octaves = 5) {
+  let val = 0, amp = 0.5, freq = 1;
+  for (let i = 0; i < octaves; i++) {
+    val += amp * smoothNoise(x * freq, y * freq);
+    amp *= 0.5;
+    freq *= 2.1;
+  }
+  return val;
+}
+```
+
+Walau terlihat matematis, intinya fungsi ini dipakai untuk membuat pola acak yang halus agar tekstur model tidak terlihat datar.
+
 #### F. Setup renderer, scene, camera, dan controls
 
 Ini adalah inti sistem 3D.
@@ -444,6 +577,20 @@ Ini sangat penting karena berarti proyek ini sadar bahwa perangkat mobile lebih 
 - material yang terlalu mahal secara performa
 
 Jadi kode ini tidak hanya membuat sesuatu “jalan”, tapi juga mencoba menjaga performa tetap ringan.
+
+Contoh kode pengaturan performa:
+
+```js
+const PERF = {
+  maxPixelRatio: IS_TOUCH_DEVICE ? 0.75 : 2,
+  usePostProcessing: !IS_TOUCH_DEVICE,
+  useShadows: !IS_TOUCH_DEVICE,
+  useEnvironment: !IS_TOUCH_DEVICE,
+  enableLabelOcclusion: !IS_TOUCH_DEVICE,
+};
+```
+
+Potongan ini menunjukkan bahwa proyek membedakan desktop dan mobile agar tetap ringan di HP.
 
 #### G. `CSS2DRenderer`
 
@@ -479,6 +626,21 @@ Diaktifkan hanya saat performa memungkinkan.
 
 Ini diatur oleh `EffectComposer` dan `UnrealBloomPass`.
 
+Contoh kode bloom:
+
+```js
+if (PERF.usePostProcessing) {
+  composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  composer.addPass(new UnrealBloomPass(
+    new THREE.Vector2(window.innerWidth, window.innerHeight),
+    0.32, 0.6, 0.7
+  ));
+}
+```
+
+Artinya, hasil render biasa diproses lagi supaya cahaya terlihat lebih dramatis.
+
 #### J. Loading model `.obj`
 
 Bagian ini adalah jantung proses pemuatan model.
@@ -509,6 +671,23 @@ Fungsi `onProgress()` akan:
 - menerapkan warna akhir
 - membuat label
 - membangun cache mesh untuk occlusion
+
+Contoh kode loading model:
+
+```js
+loader.load(
+  `Bacterial cell structure/model_${def.id}.obj`,
+  obj => {
+    obj.traverse(c => { if (c.isMesh) c.material = mat; });
+    meshMap[def.id] = obj;
+    group.add(obj);
+    loadedCount++;
+    onProgress(loadedCount);
+  }
+);
+```
+
+Ini adalah momen saat file model benar-benar dibaca lalu dimasukkan ke dunia 3D.
 
 #### K. `fitCamera()`
 
@@ -571,6 +750,22 @@ Saat klik kanan dan mode edit aktif:
 - label bisa dituning
 - settings panel bisa membuka bagian pengaturan label
 
+Contoh kode pembuatan label:
+
+```js
+const el = document.createElement('div');
+el.className = 'label3d';
+el.innerHTML =
+  `<span class="lnum">${o.num}</span>` +
+  `<span class="lname">${o.icon} ${o.name}</span>`;
+
+const css2d = new CSS2DObject(el);
+css2d.position.copy(pos);
+scene.add(css2d);
+```
+
+Jadi label bukan teks yang digambar langsung di model, tetapi elemen HTML yang ditempel pada posisi 3D tertentu.
+
 #### N. Occlusion label
 
 Masalah umum pada label 3D adalah label bisa tertutup objek.
@@ -607,6 +802,23 @@ Fungsi ini menghitung:
 
 Ini membuat viewer terasa lebih modern dan nyaman dilihat.
 
+Contoh kode animasi kamera:
+
+```js
+function flyToOrganelle(targetPos) {
+  const startPos = camera.position.clone();
+  const startTarget = controls.target.clone();
+
+  function step() {
+    camera.position.lerpVectors(startPos, camDest, ease);
+    controls.target.lerpVectors(startTarget, targetPos, ease);
+    controls.update();
+  }
+}
+```
+
+Maknanya: kamera berpindah sedikit demi sedikit, bukan langsung loncat.
+
 #### P. Info popup
 
 Fungsi `showInfo(o)` mengambil data dari objek organel lalu mengisi popup:
@@ -620,6 +832,21 @@ Fungsi `showInfo(o)` mengambil data dari objek organel lalu mengisi popup:
 - list fakta
 
 Sedangkan `closeInfo()` hanya menyembunyikan popup.
+
+Contoh kode popup:
+
+```js
+function showInfo(o) {
+  document.getElementById('popup-icon').textContent = o.icon;
+  document.getElementById('popup-name').textContent = o.name;
+  document.getElementById('popup-sub').textContent = o.sub;
+  document.getElementById('popup-desc').textContent = o.desc;
+  document.getElementById('popup-detail').innerHTML =
+    o.detail.map(d => '<li>' + d + '</li>').join('');
+}
+```
+
+Terlihat jelas bahwa popup diisi dari data organel, bukan ditulis manual satu-satu untuk setiap klik.
 
 #### Q. Toolbar dan settings panel
 
@@ -651,6 +878,19 @@ Fungsi-fungsi berikut mengurus interaksi antarmuka:
 
 - `toggleLayer(id)`
   Menyembunyikan atau menampilkan bagian model tertentu.
+
+Contoh kode toggle layer:
+
+```js
+function toggleLayer(id) {
+  if (meshMap[id] === undefined) return;
+  layerVisible[id] = !layerVisible[id];
+  if (meshMap[id]) meshMap[id].visible = layerVisible[id];
+  syncLabelVisibility();
+}
+```
+
+Artinya saat sebuah layer dimatikan, modelnya hilang dari scene dan labelnya ikut disesuaikan.
 
 #### R. Label tuning UI
 
@@ -724,6 +964,20 @@ Di bagian paling bawah ada beberapa event penting:
 
 Ini menjembatani HTML dan JavaScript.
 
+Contoh kode expose function ke HTML:
+
+```js
+Object.assign(window, {
+  toggleLabels,
+  toggleSettings,
+  resetCamera,
+  focusOrganelle,
+  closeInfo
+});
+```
+
+Tujuannya agar tombol HTML yang memakai `onclick` bisa memanggil fungsi yang ada di `script.js`.
+
 ---
 
 ### `conf.json` — Posisi Label
@@ -764,6 +1018,25 @@ Penjelasan tiap bagian:
 
 Secara sederhana, file ini adalah “pengingat posisi label” untuk viewer 3D.
 
+Contoh kode asli `conf.json`:
+
+```json
+{
+  "version": 1,
+  "labelEditable": 0,
+  "showGuideLines": false,
+  "guideLineColor": 2282478,
+  "fallbackAnchor": [0.15, 0.35, 0.15],
+  "anchorsByModelId": {
+    "0": [0.2, 0.35, 0.3],
+    "1": [-0.2, 0.28, 0.3],
+    "2": [0.028399963378906212, 0.17680001831054687, -0.35]
+  }
+}
+```
+
+Nilai desimal ini memang wajar, karena posisi label sering berasal dari hasil tuning manual yang cukup presisi.
+
 ---
 
 ### `start-server.bat` — Menjalankan Server Lokal
@@ -785,6 +1058,19 @@ Karena browser biasanya membatasi pemuatan file module dan file 3D jika halaman 
 Jadi file `.bat` ini bukan bagian tampilan website, tetapi alat bantu saat development.
 
 Catatan kecil: judul di file ini masih bertuliskan `3D Plant Cell - Local Server`, jadi itu kemungkinan sisa dari proyek atau nama lama.
+
+Contoh kode `start-server.bat`:
+
+```bat
+python --version >nul 2>&1
+IF %ERRORLEVEL% == 0 (
+  echo Menjalankan server dengan Python...
+  python -m http.server 8000
+  goto :end
+)
+```
+
+Kode ini artinya: kalau Python ada, langsung pakai Python sebagai server lokal.
 
 ---
 
